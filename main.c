@@ -93,7 +93,7 @@ static int parse_args(int argc, char *argv[]) {
                 nECHO(GREEN_BOLD, "  -P, --all-pids      "); nECHO(GREY, "show both process and thread IDs\n");
                 nECHO(GREEN_BOLD, "  -V, --version       "); nECHO(GREY, "display version information\n");
                 nECHO(GREEN_BOLD, "  -C, --color[=TYPE]  "); nECHO(GREY, "colorize output based on TYPE\n");
-                nECHO(GREY, "                      "); nECHO(GREY, "(optional: "); nECHO(GREEN_BOLD,"StartTime, ProcessState)\n");
+                nECHO(GREY, "                      "); nECHO(GREY, "(optional: "); nECHO(GREEN_BOLD,"time (StartTime), state (ProcessState))\n");
                 nECHO(GREEN_BOLD, "  -n, --numeric-sort  "); nECHO(GREY, "sort output by process ID\n");
                 nECHO(GREEN_BOLD, "  PID                 "); nECHO(GREY, "start at this PID; default is 1 (init)\n");
 
@@ -117,11 +117,11 @@ static int parse_args(int argc, char *argv[]) {
             case 'C':
                 colorFlag = true;
                 if (optarg) {
-                    if (strcmp(optarg, "StartTime") == 0) {
+                    if (strcmp(optarg, "=time") == 0) {
                         colorType = StartTime;
                         nECHO(GREEN, "Color option selected with argument: ");
                         nECHO(YELLOW_BOLD, "%s\n", optarg);
-                    } else if (strcmp(optarg, "ProcessState") == 0) {
+                    } else if (strcmp(optarg, "=state") == 0) {
                         colorType = ProcessState;
                         nECHO(GREEN, "Color option selected with argument: ");
                         nECHO(YELLOW_BOLD, "%s\n", optarg);
@@ -133,11 +133,11 @@ static int parse_args(int argc, char *argv[]) {
                     // 处理没有使用 '=' 的情况，但参数直接跟随在 `-C` 之后
                     optarg = argv[optind];
                     optind++;
-                    if (strcmp(optarg, "StartTime") == 0) {
+                    if (strcmp(optarg, "time") == 0) {
                         colorType = StartTime;
                         nECHO(GREEN, "Color option selected with argument: ");
                         nECHO(YELLOW_BOLD, "%s\n", optarg);
-                    } else if (strcmp(optarg, "ProcessState") == 0) {
+                    } else if (strcmp(optarg, "state") == 0) {
                         colorType = ProcessState;
                         nECHO(GREEN, "Color option selected with argument: ");
                         nECHO(YELLOW_BOLD, "%s\n", optarg);

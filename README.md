@@ -36,7 +36,7 @@ Usage: progname [-hpPVnC] [PID]
   -p, --proc-pids     仅显示进程 ID
   -P, --all-pids      显示进程和线程 ID
   -V, --version       显示版本信息并退出
-  -C, --color[=TYPE]  根据指定类型为输出着色 (StartTime, ProcessState)
+  -C, --color[=TYPE]  根据指定类型为输出着色 (time (StartTime), state (ProcessState))
   -n, --numeric-sort  按进程 ID 排序输出
   PID                 从此 PID 开始显示，默认为 1 (init 进程)
 ```
@@ -81,7 +81,7 @@ Usage: progname [-hpPVnC] [PID]
   -p, --proc-pids     Show process IDs only
   -P, --all-pids      Show both process and thread IDs
   -V, --version       Display version information and exit
-  -C, --color[=TYPE]  Colorize output based on TYPE (StartTime, ProcessState)
+  -C, --color[=TYPE]  Colorize output based on TYPE (time (StartTime), state (ProcessState))
   -n, --numeric-sort  Sort output by process ID
   PID                 Start displaying from this PID; default is 1 (init process)
 ```
