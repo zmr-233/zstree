@@ -4,6 +4,10 @@
 
 /bin
 
+bin/zstree
+
 /.vscode
 
 a.out
+
+/tmp

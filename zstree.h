@@ -1,6 +1,8 @@
 #ifndef __ZSTREE_H__
 #define __ZSTREE_H__
 
+#define _GNU_SOURCE
+
 #include <getopt.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -21,25 +23,18 @@
 #include "marco.h"
 #include "define.h"
 
-
-
+// -----------基础类型别名-----------
 typedef long lg;
 typedef unsigned long ulg;
 typedef long long llg;
 typedef unsigned long long ullg;
 
-static inline ulg min(ulg a, ulg b) {
-    return a < b ? a : b;
-}
-
-static inline ulg max(ulg a, ulg b) {
-    return a > b ? a : b;
-}
+static inline ulg min(ulg a, ulg b) {return a < b ? a : b;}
+static inline ulg max(ulg a, ulg b) {return a > b ? a : b;}
 
 // -----------p_queue头文件--自定义区域-----------
 typedef struct proc Elem;
 extern bool reverse;
-
 bool cmp(Elem* a, Elem* b);
 // -----------p_queue头文件--结构声明-----------
 typedef bool (*__CMPF__)(Elem*, Elem*); // 比较函数指针
@@ -66,6 +61,23 @@ Elem* pq_top(p_queue *pq);
 bool pq_empty(p_queue *pq);
 int pq_size(p_queue *pq);
 
+// -----------flag变量+命令行参数处理-----------
+extern bool pidProcFlag, //只显示进程的pid
+    pidThreadFlag, //只显示线程的pid
+    colorFlag, //是否显示颜色
+    sortFlag; //是否按照pid排序
+
+//颜色类型枚举
+typedef enum COLOR_TYPE{
+    NoColor, //无颜色
+    StartTime, //开始时间
+    ProcessState, //进程状态
+}COLOR_TYPE;
+
+extern COLOR_TYPE colorType; //颜色类型
+
+int parse_args(int argc, char *argv[]);//解析命令行参数
+
 // -----------进程结构定义-----------
 
 #define MAX_PORC 2048
@@ -80,23 +92,38 @@ struct proc{
     char state;
     int ppid;
     int num_threads;
+    /*---解析命令行参数---*/
+    char** argv;
+    int argc;
     ulg start_time;
     p_queue *threads;
     p_queue *subprocs;
 };
 
-extern int pids[MAX_PORC];
-extern int npids;
-// extern ulg hsh[MOD];
-extern proc* root;
+//---------全局作用域定义部分-------------
 
-//最小和最大时间
-extern ulg MIN_START_TIME,
-           MAX_START_TIME;
+extern pid_t SELF_PID; //自身pid
+
+extern proc* root; //进程树根节点
+
+//时间定义部分
+extern ulg TICKS_PER_SECOND, //每秒滴答数
+    CURRENT_TIME, //当前时间
+    MIN_START_TIME, //最小启动时间
+    MAX_START_TIME; //最大启动时间
+    //该最小最大启动时间用于颜色渐变的线性插值计算
+
+// -----------build_tree进程树构建-----------
+
+proc* build_proc(int pid);
+
+// -----------print_tree进程树打印-----------
+
+void print_tree(proc* p);
 
 // -----------utils函数定义-----------
-void DEB_SHOW(proc* p);
-ulg strhash(char *str);
+void DEB_SHOW(proc* p); //调试打印
+ulg strhash(char *str); //字符串哈希
 
 // 根据start_time计算颜色 -- 可变参
 int lerp(int start, int end, float t);

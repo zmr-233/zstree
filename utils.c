@@ -5,9 +5,38 @@ void DEB_SHOW(proc* p){
         ERROR("Process Null");
         return;
     }
-    DEBUG("%d { \n    name: %s\n    state: %c\n    ppid: %d\n    num_threads: %d\n}", 
-        p->pid, p->name, p->state,p->ppid,p->num_threads);
+    if(p->num_threads==0) return; //该proc是线程
+    DEBUG("%d { \n    name: %s\n    state: %c\n    ppid: %d\n    num_threads: %d", 
+        p->pid, p->name, p->state, p->ppid, p->num_threads);
+    
+    //启动时间
+    ECHO(YELLOW,"    start_time: %lu", p->start_time);
+    
+    if(p->threads){
+        int threads_size = pq_size(p->threads);
+        if(threads_size >= 1){
+            Elem *first_thread = pq_top(p->threads);
+            ECHO(YELLOW, "    threads: %s(%d)%s", 
+                first_thread->name, first_thread->pid, threads_size > 1 ? "..." : "");
+        }else  ECHO(YELLOW,"    threads: Null");
+    } else {
+        ECHO(YELLOW,"    threads: Null");
+    }
+
+    if(p->subprocs){
+        int subprocs_size = pq_size(p->subprocs);
+        if(subprocs_size >= 1){
+            Elem *first_subproc = pq_top(p->subprocs);
+            ECHO(YELLOW, "    subprocs: %s(%d)%s", 
+                first_subproc->name, first_subproc->pid, subprocs_size > 1 ? "..." : "");
+        }else  ECHO(YELLOW,"    subprocs: Null");
+    } else {
+        ECHO(YELLOW, "    subprocs: Null");
+    }
+
+    ECHO(YELLOW, "}");
 }
+
 
 ulg strhash(char *str) {
     ulg hash = 5381;
