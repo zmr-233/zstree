@@ -55,6 +55,24 @@ static void __process_info__(){
 }
 
 //----------------------主函数----------------------
+#ifdef DEB
+int main(int argc, char *argv[]){
+    __init__();
+    
+    pidProcFlag=false,
+    pidThreadFlag=false,
+    colorFlag=true,
+    sortFlag=true,
+    foldFlag=true,
+    colorType=StartTime;
+
+    __process_info__(); // 打印颜色信息备注
+    //IFDEF(DEB,{pidProcFlag=true,pidThreadFlag=true,colorFlag=true,sortFlag=true,colorType=StartTime;});
+    root = build_proc(1);
+    //IFDEF(DEB,DEB_SHOW(root));
+    print_tree(root);
+}
+#else
 int main(int argc, char *argv[]){
     __init__();
     if(argc==1){
@@ -75,3 +93,4 @@ int main(int argc, char *argv[]){
     //IFDEF(DEB,DEB_SHOW(root));
     print_tree(root);
 }
+#endif

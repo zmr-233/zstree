@@ -65,7 +65,8 @@ int pq_size(p_queue *pq);
 extern bool pidProcFlag, //只显示进程的pid
     pidThreadFlag, //只显示线程的pid
     colorFlag, //是否显示颜色
-    sortFlag; //是否按照pid排序
+    sortFlag, //是否按照pid排序
+    foldFlag; //是否折叠打印
 
 //颜色类型枚举
 typedef enum COLOR_TYPE{

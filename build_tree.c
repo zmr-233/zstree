@@ -46,7 +46,6 @@ static void read_stat(proc* p, char* stat) {
            &p->state, &p->ppid, &p->num_threads, &p->start_time);
     
     // 更新全局的最小启动时间和最大启动时间
-    IFDEF(DEB, DEB_SHOW(p));
     MIN_START_TIME = min(p->start_time, MIN_START_TIME);
     MAX_START_TIME = max(p->start_time, MAX_START_TIME);
     

@@ -1,14 +1,18 @@
 #include "zstree.h"
 
+//注意：DEB_SHOW不打印线程，只打印进程
 void DEB_SHOW(proc* p){
     if(!p){
         ERROR("Process Null");
         return;
     }
+
     if(p->num_threads==0) return; //该proc是线程
     DEBUG("%d { \n    name: %s\n    state: %c\n    ppid: %d\n    num_threads: %d", 
         p->pid, p->name, p->state, p->ppid, p->num_threads);
     
+    //命令行参数
+
     //启动时间
     ECHO(YELLOW,"    start_time: %lu", p->start_time);
     
@@ -68,7 +72,6 @@ void COLOR_TIME(ulg start_time, const char* fmt, ...) {
     printf("\x1b[38;2;%d;%d;%dm", r, g, b);
     vprintf(fmt, args);
     printf("\x1b[0m");
-    IFDEF(DEB,fflush(stdout));
     va_end(args);
 }
 

@@ -56,10 +56,18 @@ static void __TREE_PREF__(){
 //打印前缀
 static void print_pre(int* cnt,int *subcnt){
     if(*cnt==1 && *subcnt==1){
-        __TREE_CHAR__(HLINE);
+        if(foldFlag){
+            printf("\n");
+            __TREE_PREF__();
+            __TREE_CHAR__(BLCORNER);
+        }else __TREE_CHAR__(HLINE);
     }
     else if(*cnt==1){
-        __TREE_CHAR__(TTEE);
+        if(foldFlag){
+            printf("\n");
+            __TREE_PREF__();
+            __TREE_CHAR__(LBRANCH);
+        }else __TREE_CHAR__(TTEE);
         pref[npref-2]=VLINE;
     }
     else if(*cnt==*subcnt){
@@ -221,7 +229,9 @@ void print_tree(proc* p){
     if(pidProcFlag) slen = snprintf(NULL, 0, "%s(%d)", p->name, p->pid);
     else slen = snprintf(NULL, 0, "%s", p->name);
 
-    npref=npref+slen+3;
+    //处理折叠模式
+    if(foldFlag) npref=npref+4; else npref=npref+slen+3;
+
     int subproc = p->subprocs->size,subthread = p->threads->size;
     int subcnt = subproc+subthread,cnt=1;
 
@@ -234,5 +244,6 @@ void print_tree(proc* p){
 
     if(subcnt==0)printf("\n");
 
-    npref = npref - slen - 3;
+    //处理折叠模式
+    if(foldFlag) npref=npref - 4; else npref=npref-slen-3;
 }
