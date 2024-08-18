@@ -22,10 +22,10 @@ static ulg TICKS_PER_SECOND; //每秒滴答数
 static ulg CURRENT_TIME; //当前时间
 
 //flag变量:
-static bool pidProcFlag=false,
-    pidThreadFlag=false,
-    colorFlag=false,
-    sortFlag=false;
+static bool pidProcFlag=false, //只显示进程的pid
+    pidThreadFlag=false, //只显示线程的pid
+    colorFlag=false, //是否显示颜色
+    sortFlag=false; //是否按照pid排序
 
 //类型选择
 typedef enum COLOR_TYPE{
@@ -112,8 +112,8 @@ static int parse_args(int argc, char *argv[]) {
 
             case 'V':
                 nECHO(GREEN, "Version 1.0\n");
+                return 2;
                 break;
-
             case 'C':
                 colorFlag = true;
                 if (optarg) {
@@ -189,7 +189,7 @@ static void read_threads(proc* p,char* task){
         ERROR("Open file %s failed",task);
         return;
     }
-    char stat[256];
+    char *stat;
     struct dirent *entry;
     while((entry=readdir(dp))){
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
@@ -197,7 +197,11 @@ static void read_threads(proc* p,char* task){
         }
         int pid=atoi(entry->d_name);
         if(pid != p->pid){
-            sprintf(stat,"%s/%d/stat",task,pid);
+            int needed_size = snprintf(NULL, 0, "%s/%d/stat", task, pid) + 1;
+            stat = (char*)malloc(needed_size);
+            if (stat != NULL) {
+                snprintf(stat, needed_size, "%s/%d/stat", task, pid);
+            }
             proc* th=(proc*)malloc(sizeof(proc));
             read_stat(th,stat);
             pq_push(p->threads,th);
@@ -206,7 +210,6 @@ static void read_threads(proc* p,char* task){
     closedir(dp);
     // assert(p->num_threads==p->threads->size);
 }
-
 static proc* build_proc(int pid);
 static void read_children(proc* p,char* child){
     FILE* fp=fopen(child,"r");
@@ -276,6 +279,9 @@ static void __TREE_CHAR__(TREE_CHAR c){
         break;
     case BLCORNER:
         printf(" └─");
+        break;
+    case NONE:
+        printf("  ");
         break;
     }
 }
@@ -362,7 +368,7 @@ static void print_procs(proc* p,int* cnt,int *subcnt){
             ulg subhash = strhash(sub->name);
             if(sub->subprocs->size == 0 && sub->threads->size == 0 
                 && hsh[subhash % MOD] > 1){
-                printf("%d*[", hsh[subhash % MOD]);
+                printf("%ld*[", hsh[subhash % MOD]);
                 print_proc(sub);
                 printf("]\n");
             }else{
@@ -426,7 +432,7 @@ static void print_threads(proc* p, int* cnt, int *subcnt) {
 
             ulg thash = strhash(th->name);
             if (hsh[thash % MOD] > 1) {
-                printf("%d*[", hsh[thash % MOD]);
+                printf("%ld*[", hsh[thash % MOD]);
                 print_thread(th);
                 printf("]\n");
             } else {

@@ -77,7 +77,7 @@ typedef struct proc proc;
 struct proc{
     int pid;
     char name[256];
-    int state;
+    char state;
     int ppid;
     int num_threads;
     ulg start_time;
