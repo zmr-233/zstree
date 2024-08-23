@@ -7,11 +7,11 @@ OUTPUT:=$(ROOT)/bin
 
 SRCS:=$(wildcard *.c)
 
-.PHONY: run deb all tmp tmp2
+.PHONY: run deb all tmp tmp2 clean
 
 all: $(OUTPUT)/zstree
 
-run: $(OUTPUT)/zstree
+run: clean $(OUTPUT)/zstree
 	$(OUTPUT)/zstree
 
 deb: $(OUTPUT)/zstree
@@ -28,3 +28,6 @@ tmp2:
 $(OUTPUT)/zstree: $(SRCS)
 	mkdir -p $(OUTPUT)
 	$(CC) $(CCFLAGS) -o $@ $^
+
+clean:
+	rm -rf $(OUTPUT)

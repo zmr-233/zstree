@@ -109,12 +109,12 @@ void pq_pop(p_queue *pq) {
     if (pq->__isorder__ && pq->root) {
         pqNode* oldRoot = pq->root;
         pq->root = __merge(oldRoot->left, oldRoot->right, pq->__cmp__);
-        //free(oldRoot);
+        free(oldRoot); //这里是不会释放Elem*所指向的对象的，因此可以放心pop后push
         pq->size--;
     } else if (!pq->__isorder__ && pq->root) {
         pqNode* oldRoot = pq->root;
         pq->root = pq->root->right;
-        //free(oldRoot);
+        free(oldRoot);
         pq->size--;
     }
 }

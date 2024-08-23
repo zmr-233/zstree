@@ -52,6 +52,69 @@ static void read_stat(proc* p, char* stat) {
     fclose(fp); 
 }
 
+// 读取cmdline文件
+static void read_cmdline(proc* p, char* cmdline) {
+    if (argsFlag) {
+        FILE* fp = fopen(cmdline, "r");
+        if (fp == NULL) {
+            ERROR("Open file %s failed", cmdline); return;
+        }
+
+        // 初始化一个动态缓冲区，使用一定的初始大小
+        size_t buffer_size = 256;
+        size_t cnt = 0;
+        char* buf = (char*)malloc(buffer_size * sizeof(char));
+        if (buf == NULL) {
+            ERROR("Memory allocation failed");
+            fclose(fp); return;
+        }
+
+        int ch; int argc = 0, nar = 0;
+        while ((ch = fgetc(fp)) != EOF) {
+            // 动态扩展缓冲区
+            if (cnt >= buffer_size) {
+                buffer_size *= 2;
+                char* new_buf = (char*)realloc(buf, buffer_size * sizeof(char));
+                if (new_buf == NULL) {
+                    ERROR("Memory reallocation failed");
+                    free(buf);
+                    fclose(fp);
+                    return;
+                }
+                buf = new_buf;
+            }
+            buf[cnt++] = (char)ch;
+            if (ch == '\0') argc++;
+        }
+        fclose(fp);
+
+        if (cnt == 0) {
+            free(buf);
+            p->argc = 0;
+            p->argv = NULL;
+            return;
+        }
+
+        p->argc = argc;
+        p->argv = (char**)malloc(argc * sizeof(char*));
+        if (p->argv == NULL) {
+            ERROR("Memory allocation for argv failed");
+            free(buf);
+            return;
+        }
+
+        p->argv[nar++] = buf;
+        for (size_t i = 0; i < cnt - 1; i++) {
+            if (buf[i] == '\0') {
+                p->argv[nar++] = buf + i + 1;
+            }
+        }
+    } else {
+        p->argc = 0;
+        p->argv = NULL;
+    }
+}
+
 // 读取线程信息
 static void read_threads(proc* p,char* task){
     DIR* dp=opendir(task);
@@ -98,15 +161,19 @@ static void read_children(proc* p,char* child){
 
 //----------------------构建核心操作----------------------
 proc* build_proc(int pid){
-    char task[256],stat[256],child[256];
-    sprintf(stat,"/proc/%d/stat",pid);
-    sprintf(task,"/proc/%d/task",pid);
-    sprintf(child,"/proc/%d/task/%d/children",pid,pid);
+    char task[64],stat[64],child[64],cmdline[64];
+    snprintf(stat,64,"/proc/%d/stat",pid);
+    snprintf(task,64,"/proc/%d/task",pid);
+    snprintf(child,64,"/proc/%d/task/%d/children",pid,pid);
+    snprintf(cmdline,64,"/proc/%d/cmdline",pid);
     
     proc* p=new_proc();
 
     //1.处理stat
     read_stat(p,stat);
+    // 处理cmdline
+    read_cmdline(p, cmdline);
+
     //2.处理线程
     read_threads(p,task);
     //3.处理子进程

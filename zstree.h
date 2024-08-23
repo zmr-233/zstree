@@ -11,6 +11,7 @@
 #include <assert.h>
 
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <time.h>
 #include <stdarg.h>
@@ -66,7 +67,9 @@ extern bool pidProcFlag, //只显示进程的pid
     pidThreadFlag, //只显示线程的pid
     colorFlag, //是否显示颜色
     sortFlag, //是否按照pid排序
-    foldFlag; //是否折叠打印
+    foldFlag, //是否折叠打印
+    forceFlag, //是否强制打印
+    argsFlag; //是否显示参数
 
 //颜色类型枚举
 typedef enum COLOR_TYPE{
@@ -107,6 +110,8 @@ extern pid_t SELF_PID; //自身pid
 
 extern proc* root; //进程树根节点
 
+extern struct winsize s_win; //终端窗口大小
+
 //时间定义部分
 extern ulg TICKS_PER_SECOND, //每秒滴答数
     CURRENT_TIME, //当前时间
@@ -125,10 +130,12 @@ void print_tree(proc* p);
 // -----------utils函数定义-----------
 void DEB_SHOW(proc* p); //调试打印
 ulg strhash(char *str); //字符串哈希
+void mergehash(ulg *h1, ulg h2); //加权合并哈希
 
 // 根据start_time计算颜色 -- 可变参
 int lerp(int start, int end, float t);
 void COLOR_TIME(ulg start_time, const char* fmt, ...);
 void COLOR_STATE(char state, const char* fmt, ...);
+void COLOR_ARGS(int argc,char** args);
 
 #endif

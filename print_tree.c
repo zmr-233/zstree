@@ -99,6 +99,39 @@ static void print_proc(proc* p){
         else printf("%s",p->name);
         break;
     }
+
+    if(argsFlag){
+        if(colorFlag) COLOR_ARGS(p->argc,p->argv);
+        else {
+            printf(" ");
+            for(int i=0;i<p->argc;i++)
+                printf("%s ",p->argv[i]);
+        }
+    }
+}
+
+static ulg __unique_procs__(proc* p){
+    ulg hsh[MOD];
+    memset(hsh, 0, sizeof(hsh));
+    //哈希去重
+    p_queue *subprocs = pq_create(sortFlag,cmp);
+    int subproc = p->subprocs->size;
+    while(!pq_empty(p->subprocs)){
+        proc* sub=pq_top(p->subprocs);
+        pq_pop(p->subprocs);
+        ulg subhash = strhash(sub->name);
+        if(sub->subprocs->size == 0 && sub->threads->size == 0){
+            if(hsh[subhash % MOD] == 0){
+                hsh[subhash % MOD]++;
+                pq_push(subprocs, sub);
+            }else{
+                hsh[subhash % MOD]++;
+            }
+        }else{
+            pq_push(subprocs, sub);
+        }
+    }
+    return subprocs->size;
 }
 
 //2.打印子进程

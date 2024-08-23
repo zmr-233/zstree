@@ -5,6 +5,8 @@ pid_t SELF_PID; //自身pid
 
 proc* root; //进程树根节点
 
+struct winsize s_win; //终端窗口大小
+
 //时间定义部分
 ulg TICKS_PER_SECOND, //每秒滴答数
     CURRENT_TIME, //当前时间
@@ -20,6 +22,7 @@ bool cmp(Elem* a, Elem* b) {
 
 //---------初始化部分-------------
 static void __init__(){
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &s_win);// 获取终端大小
     setlocale(LC_ALL, ""); //设置本地化
     SELF_PID=getpid();
     TICKS_PER_SECOND = sysconf(_SC_CLK_TCK);
@@ -64,6 +67,7 @@ int main(int argc, char *argv[]){
     colorFlag=true,
     sortFlag=true,
     foldFlag=true,
+    argsFlag=true,
     colorType=StartTime;
 
     __process_info__(); // 打印颜色信息备注

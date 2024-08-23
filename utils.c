@@ -41,7 +41,7 @@ void DEB_SHOW(proc* p){
     ECHO(YELLOW, "}");
 }
 
-
+//字符串哈希
 ulg strhash(char *str) {
     ulg hash = 5381;
     int c;
@@ -50,6 +50,12 @@ ulg strhash(char *str) {
         hash = ((hash << 5) + hash) + c;
     }
     return hash;
+}
+
+//加权合并哈希
+void mergehash(ulg *h1, ulg h2) {
+    const ulg weight = 31;
+    *h1 = (*h1 * weight) + h2;
 }
 
 //-----------线性插值渐变RGB-----------
@@ -116,6 +122,17 @@ void COLOR_STATE(char state, const char* fmt, ...) {
     printf("\x1b[0m");  // 重置颜色
 
     va_end(args);
+}
+
+//根据参数计算颜色
+void COLOR_ARGS(int argc,char** args){
+    int r = 129, g = 236, b = 236;  // 默认颜色为白色
+    printf(" ");
+    // 设置颜色并打印
+    printf("\x1b[38;2;%d;%d;%dm", r, g, b);
+    for(int i=0;i<argc;i++)
+        printf("%s ",args[i]);
+    printf("\x1b[0m");  // 重置颜色
 }
 
 /*单元测试：渐变色打印

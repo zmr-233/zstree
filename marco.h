@@ -124,15 +124,16 @@
 #define RESET       "\033[0m"
 
 //====   Colorized macros  ====
-#define nECHO(color, fmt, ...)    printf(color fmt RESET, ##__VA_ARGS__)
-#define ECHO(color, fmt, ...)    printf(color fmt RESET "\n", ##__VA_ARGS__)
-#define INFO(fmt, ...)           ECHO(GREEN_BOLD, "INFO: " fmt, ##__VA_ARGS__)
-#define WARN(fmt, ...)           ECHO(YELLOW_BOLD, "WARNING: " fmt, ##__VA_ARGS__)
-#define ERROR(fmt, ...)          ECHO(RED_BOLD, "ERROR: " fmt, ##__VA_ARGS__)
-#define SUCCESS(fmt, ...)        ECHO(GREEN_BOLD, "SUCCESS: " fmt, ##__VA_ARGS__)
-#define NOTE(fmt, ...)           ECHO(BLUE_BOLD, "NOTE: " fmt, ##__VA_ARGS__)
+// Must use #define DEBUG 1 to enable debug messages, set 0 to disable
+#define nECHO(color, fmt, ...)   printf(color fmt RESET, ##__VA_ARGS__)
+#define ECHO(color, fmt, ...)    IFDEF(DEB,printf(color fmt RESET "\n", ##__VA_ARGS__))
+#define INFO(fmt, ...)           ECHO(GREEN_BOLD, "[INFO] " fmt, ##__VA_ARGS__)
+#define WARN(fmt, ...)           ECHO(YELLOW_BOLD, "[WARNING] " fmt, ##__VA_ARGS__)
+#define ERROR(fmt, ...)          ECHO(RED_BOLD, "[ERROR] " fmt, ##__VA_ARGS__)
+#define SUCCESS(fmt, ...)        ECHO(GREEN_BOLD, "[SUCCESS] " fmt, ##__VA_ARGS__)
+#define NOTE(fmt, ...)           ECHO(BLUE_BOLD, "[NOTE] " fmt, ##__VA_ARGS__)
 #define INPUT(fmt, ...)          ECHO(CYAN_BOLD, "==INPUT== " fmt, ##__VA_ARGS__)
-#define ABORT(fmt, ...)          ECHO(RED_BOLD, "ABORT: " fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...)          ECHO(YELLOW, "DEBUG: " fmt, ##__VA_ARGS__)
+#define ABORT(fmt, ...)          ECHO(RED_BOLD, "[ABORT] " fmt, ##__VA_ARGS__)
+#define DEBUG(fmt, ...)          ECHO(YELLOW, "[DEBUG] " fmt, ##__VA_ARGS__)
 
 #endif

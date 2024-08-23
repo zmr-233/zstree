@@ -8,7 +8,9 @@ bool pidProcFlag=false, //只显示进程的pid
     pidThreadFlag=false, //只显示线程的pid
     colorFlag=false, //是否显示颜色
     sortFlag=false, //是否按照pid排序
-    foldFlag=false; //是否折叠打印
+    foldFlag=false, //是否折叠打印
+    forceFlag=false, //是否强制打印
+    argsFlag=false; //是否显示参数
 
 /*
 //颜色类型枚举
@@ -30,9 +32,11 @@ int parse_args(int argc, char *argv[]) {
         {"color", optional_argument, NULL, 'C'},
         {"numeric-sort", no_argument, NULL, 'n'},
         {"fold-print", no_argument, 0, 'f'},
+        {"full-print", no_argument, 0, 'F'},
+        {"args", no_argument, 0, 'a'},
         {0, 0, 0, 0}
     };
-    const char *shortopts = "hpPVCf::n";
+    const char *shortopts = "hpPVCfa::n";
     int opt = 0, index = 0;
 
     while ((opt = getopt_long_only(argc, argv, shortopts, long_options, &index)) != -1) {
