@@ -125,8 +125,27 @@
 
 //====   Colorized macros  ====
 // Must use #define DEBUG 1 to enable debug messages, set 0 to disable
-#define nECHO(color, fmt, ...)   printf(color fmt RESET, ##__VA_ARGS__)
-#define ECHO(color, fmt, ...)    IFDEF(DEB,printf(color fmt RESET "\n", ##__VA_ARGS__))
+
+#define nECHO(color, fmt, ...)    printf(color fmt RESET, ##__VA_ARGS__)
+
+#ifdef SHOWLINE
+  #ifdef SHOWERRNO 
+    //======================== 用来显示errno错误信息 ========================
+    #include <errno.h>
+    #define strERRNO() (errno == 0 ? "None" : strerror(errno))
+    #define ECHO(color, fmt, ...)    printf(color fmt RESET \
+    "    (" GREY "%s" RESET ":" CYAN_BOLD "%d" RESET "," YELLOW "ERRNO: %s" RESET ")\n",\
+     ##__VA_ARGS__, __FILE__, __LINE__, strERRNO())
+  #else
+    //======================== 用来显示行号 ========================
+    #define ECHO(color, fmt, ...)    printf(color fmt RESET \
+    "    (" GREY "%s" RESET ":" CYAN_BOLD "%d" RESET ")\n", ##__VA_ARGS__, __FILE__, __LINE__)
+  #endif
+#else
+  //======================== 不显示行号 ========================
+  #define ECHO(color, fmt, ...)    printf(color fmt RESET "\n", ##__VA_ARGS__)
+#endif
+
 #define INFO(fmt, ...)           ECHO(GREEN_BOLD, "[INFO] " fmt, ##__VA_ARGS__)
 #define WARN(fmt, ...)           ECHO(YELLOW_BOLD, "[WARNING] " fmt, ##__VA_ARGS__)
 #define ERROR(fmt, ...)          ECHO(RED_BOLD, "[ERROR] " fmt, ##__VA_ARGS__)

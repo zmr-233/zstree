@@ -58,7 +58,29 @@ static void __process_info__(){
 }
 
 //----------------------主函数----------------------
-#ifdef DEB
+#ifdef TEST_MARCO
+int main(int argc, char *argv[]){
+    errno = ENOTSUP;
+    DEBUG("Starting the program");
+    errno = ECANCELED;
+    INFO("Attempting to open the file");
+    errno = EPERM;
+    WARN("This is a warning message, just in case");
+    errno = EIO;
+    ERROR("An error occurred while processing");
+    errno = EOWNERDEAD;
+    SUCCESS("The operation was successful");
+    errno = EAGAIN;
+    NOTE("Here is an additional note");
+    errno = EINTR;
+    INPUT("User input detected");
+    errno = ECONNABORTED;
+    ABORT("Critical error, aborting operation");
+    errno = ECHILD;
+    DEBUG("Program finished execution");
+    return 0;
+}
+#elif DEB
 int main(int argc, char *argv[]){
     __init__();
     

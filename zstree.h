@@ -20,9 +20,9 @@
 #include <locale.h>
 
 
-
-#include "marco.h"
 #include "define.h"
+#include "marco.h"
+
 
 // -----------基础类型别名-----------
 typedef long lg;
